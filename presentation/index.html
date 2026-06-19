@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Interactive Presentation Dashboard for Bank Marketing Campaign Optimization Machine Learning Project. Optimize telemarketing lead targeting.">
+    <title>Bank Marketing Campaign Optimization Dashboard</title>
+    <!-- Fonts: Inter and Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar / Navigation Header -->
+        <header class="main-header" id="main-header">
+            <div class="branding">
+                <div class="logo-icon"><i class="fa-solid fa-building-columns"></i></div>
+                <div class="brand-text">
+                    <h1>Retail Banking Co.</h1>
+                    <p>Marketing Analytics Division</p>
+                </div>
+            </div>
+            
+            <nav class="nav-tabs" id="nav-tabs" aria-label="Dashboard Navigation">
+                <button class="tab-btn active" id="tab-slides" onclick="switchTab('slides')">
+                    <i class="fa-solid fa-person-chalkboard"></i> Presentation Slides
+                </button>
+                <button class="tab-btn" id="tab-eda" onclick="switchTab('eda')">
+                    <i class="fa-solid fa-chart-pie"></i> EDA Insights
+                </button>
+                <button class="tab-btn" id="tab-models" onclick="switchTab('models')">
+                    <i class="fa-solid fa-award"></i> Model Evaluation
+                </button>
+                <button class="tab-btn" id="tab-tuning" onclick="switchTab('tuning')">
+                    <i class="fa-solid fa-sliders"></i> Threshold Tuning
+                </button>
+                <button class="tab-btn" id="tab-roi" onclick="switchTab('roi')">
+                    <i class="fa-solid fa-calculator"></i> ROI Calculator
+                </button>
+                <button class="tab-btn" id="tab-simulator" onclick="switchTab('simulator')">
+                    <i class="fa-solid fa-circle-play"></i> What-If Simulator
+                </button>
+            </nav>
+            
+            <div class="header-footer">
+                <p class="status-tag"><span class="pulse-dot"></span> Recommended Model: Tuned RF</p>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="content-viewport" id="content-viewport">
+            
+            <!-- SECTION 1: PRESENTATION SLIDES -->
+            <section id="section-slides" class="content-section active-section" aria-labelledby="slides-header">
+                <h2 class="sr-only" id="slides-header">Presentation Slides Section</h2>
+                <div class="slides-container">
+                    <!-- Progress Bar -->
+                    <div class="slide-progress-bar">
+                        <div class="progress-fill" id="slide-progress-fill"></div>
+                    </div>
+                    
+                    <!-- Slide Viewport -->
+                    <div class="slide-viewport">
+                        
+                        <!-- Slide 1: Cover Page -->
+                        <div class="slide-card active-slide" id="slide-1">
+                            <div class="slide-cover-layout">
+                                <span class="slide-tag">PROJECT PRESENTATION</span>
+                                <h2 class="slide-display-title">Optimizing Direct Marketing Campaigns</h2>
+                                <h3 class="slide-subtitle">A Machine Learning Approach to Predict Term Deposit Subscriptions</h3>
+                                <div class="slide-divider"></div>
+                                <p class="slide-abstract">
+                                    Direct telemarketing is costly and causes customer fatigue. This project details the end-to-end implementation of an ML targeting pipeline that increases conversion rates and reduces campaign operational costs.
+                                </p>
+                                <div class="cover-meta-grid">
+                                    <div class="meta-item"><i class="fa-regular fa-user"></i> <span>Data Science Intern</span></div>
+                                    <div class="meta-item"><i class="fa-regular fa-folder-open"></i> <span>Retail Banking Division</span></div>
+                                    <div class="meta-item"><i class="fa-regular fa-calendar-days"></i> <span>June 2026</span></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 2: Problem Statement & Dataset -->
+                        <div class="slide-card" id="slide-2">
+                            <div class="slide-standard-layout">
+                                <div class="slide-header">
+                                    <span class="slide-num">02</span>
+                                    <h2 class="slide-section-title">The Challenge: Imbalance & Inefficiencies</h2>
+                                </div>
+                                <div class="slide-content-grid col-2">
+                                    <div class="text-block">
+                                        <h3>Direct Telemarketing Inefficiencies</h3>
+                                        <p>Randomly calling customers from a database is highly inefficient and creates negative customer sentiment. Our goal is to identify high-probability prospects beforehand.</p>
+                                        
+                                        <h3 class="margin-top">The Data Context</h3>
+                                        <p>Using the <strong>UCI Bank Marketing Dataset</strong> (41,188 rows, 21 variables) spanning May 2008 to November 2010.</p>
+                                        
+                                        <div class="warning-callout">
+                                            <i class="fa-solid fa-triangle-exclamation"></i>
+                                            <div>
+                                                <strong>Severe Class Imbalance:</strong> 88.73% said "No" vs 11.27% who said "Yes".
+                                                Standard accuracy is a trap (a dummy model gets 88.7% accuracy by predicting only "No").
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slide-visual-center">
+                                        <div class="card-donut-wrapper">
+                                            <canvas id="slide-donut-chart"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 3: Exploratory Data Analysis & Leakage -->
+                        <div class="slide-card" id="slide-3">
+                            <div class="slide-standard-layout">
+                                <div class="slide-header">
+                                    <span class="slide-num">03</span>
+                                    <h2 class="slide-section-title">Key Insights & Leakage Control</h2>
+                                </div>
+                                <div class="slide-content-grid col-2">
+                                    <div class="text-block">
+                                        <h3>Statistical Profile of a Subscriber</h3>
+                                        <ul>
+                                            <li><strong>Interest Rates Matter:</strong> Subscribed clients were contacted when 3-month Euribor rates were low (avg 2.12% vs 3.81% for non-subscribers).</li>
+                                            <li><strong>Campaign Limits:</strong> Non-subscribers averaged 2.63 contacts while subscribers averaged 2.05 contacts. Success falls off after 3-4 calls.</li>
+                                        </ul>
+                                        
+                                        <div class="info-callout">
+                                            <i class="fa-solid fa-shield-halved"></i>
+                                            <div>
+                                                <strong>Dropped Housing & Personal Loans:</strong> Statistical tests (Chi-Square) confirmed housing and personal loans are <em>not</em> statistically significant (p-values: 0.058 and 0.579).
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="text-block">
+                                        <div class="danger-callout">
+                                            <i class="fa-solid fa-clock-rotate-left"></i>
+                                            <div>
+                                                <strong>Critical Leakage Feature: Call Duration</strong>
+                                                <p>Call length in seconds is highly predictive, but it is <em>only</em> known after a call is placed. At prediction time, duration is zero. Retaining duration in training is a leakage bug. We completely dropped it to build a realistic, deployable model.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 4: Modeling Methodology -->
+                        <div class="slide-card" id="slide-4">
+                            <div class="slide-standard-layout">
+                                <div class="slide-header">
+                                    <span class="slide-num">04</span>
+                                    <h2 class="slide-section-title">Modeling Strategy & Imbalance</h2>
+                                </div>
+                                <div class="slide-content-grid col-2">
+                                    <div class="text-block">
+                                        <h3>Pipeline Engineering</h3>
+                                        <p>A robust ColumnTransformer pipeline handles the features properly:</p>
+                                        <ul>
+                                            <li><strong>Train-Test Split:</strong> 80/20 stratified partition on target.</li>
+                                            <li><strong>Numerical scale:</strong> StandardScaler for normalization.</li>
+                                            <li><strong>Categorical encoding:</strong> OneHotEncoder, keeping "unknown" values as a distinct level to prevent sample size drops.</li>
+                                        </ul>
+                                    </div>
+                                    <div class="text-block">
+                                        <h3>Resolving the Imbalance</h3>
+                                        <p>To overcome the 11.27% positive class skew, we designed and tested several methodologies:</p>
+                                        <ol>
+                                            <li><strong>Cost-Sensitive Learning:</strong> Penalizing positive class errors.</li>
+                                            <li><strong>Resampling (ROS, RUS):</strong> Modifying training sets.</li>
+                                            <li><strong>SMOTE:</strong> Creating synthetic minority subscriber examples.</li>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 5: Model Results & Recommendations -->
+                        <div class="slide-card" id="slide-5">
+                            <div class="slide-standard-layout">
+                                <div class="slide-header">
+                                    <span class="slide-num">05</span>
+                                    <h2 class="slide-section-title">Model Leaderboard & Recommended Choice</h2>
+                                </div>
+                                <div class="slide-content-grid col-2">
+                                    <div class="text-block">
+                                        <h3>Why Tuned Random Forest?</h3>
+                                        <p>We tested 11 models. Tuned Random Forest yielded the best trade-off:</p>
+                                        <ul>
+                                            <li><strong>CatBoost:</strong> High accuracy (90.22%) but poor Recall (23.17%). Misses 76% of subscribers.</li>
+                                            <li><strong>SMOTE LogReg:</strong> High Recall (65.84%) but poor Precision (35.81%). Too many wasted calls.</li>
+                                            <li><strong>Tuned RF:</strong> Best balanced <strong>F1-score of 51.27%</strong> (captures 61% of subscribers with 44.22% precision).</li>
+                                        </ul>
+                                    </div>
+                                    <div class="slide-visual-center">
+                                        <table class="slide-mini-table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Model</th>
+                                                    <th>Accuracy</th>
+                                                    <th>F1 (Yes)</th>
+                                                    <th>Recall (Yes)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="highlighted-row">
+                                                    <td>Tuned Random Forest</td>
+                                                    <td>86.94%</td>
+                                                    <td>51.27%</td>
+                                                    <td>60.99%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Random Forest</td>
+                                                    <td>85.57%</td>
+                                                    <td>49.85%</td>
+                                                    <td>63.69%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>SMOTE Logistic Reg</td>
+                                                    <td>82.86%</td>
+                                                    <td>46.39%</td>
+                                                    <td>65.84%</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>CatBoost Baseline</td>
+                                                    <td>90.22%</td>
+                                                    <td>34.79%</td>
+                                                    <td>23.17%</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Slide 6: Business Action Plan -->
+                        <div class="slide-card" id="slide-6">
+                            <div class="slide-standard-layout">
+                                <div class="slide-header">
+                                    <span class="slide-num">06</span>
+                                    <h2 class="slide-section-title">Strategic Action Plan for ROI</h2>
+                                </div>
+                                <div class="slide-content-grid col-2">
+                                    <div class="text-block">
+                                        <h3>1. Deploy Model lead-scoring</h3>
+                                        <p>Only call customers predicted positive by the model. This lifts list conversion from 11.3% to 44.2% (a 3.9x improvement).</p>
+                                        
+                                        <h3>2. Interest Rate-Driven Campaigns</h3>
+                                        <p>Macro factors represent 46% of model weights. Double campaign volume during low Euribor rate periods when customers seek deposit terms.</p>
+                                    </div>
+                                    <div class="text-block">
+                                        <h3>3. Operational Threshold Tuning</h3>
+                                        <p>Shift threshold from 0.5 to 0.4 if call capacity increases. This captures 73.38% of total subscribers with 27.16% precision.</p>
+                                        
+                                        <h3>4. Enforce Call Capping</h3>
+                                        <p>Cap customer contacts to 3-4 per campaign to prevent fatigue and waste.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <!-- Slide Navigation Controls -->
+                    <div class="slide-controls">
+                        <button class="slide-btn" onclick="prevSlide()"><i class="fa-solid fa-chevron-left"></i> Previous</button>
+                        <span class="slide-indicator" id="slide-indicator">Slide 1 of 6</span>
+                        <button class="slide-btn" onclick="nextSlide()">Next <i class="fa-solid fa-chevron-right"></i></button>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- SECTION 2: EDA INSIGHTS HUB -->
+            <section id="section-eda" class="content-section" aria-labelledby="eda-header">
+                <h2 class="section-title-bar" id="eda-header">Exploratory Data Analysis Insights</h2>
+                <div class="grid-2-cols">
+                    <!-- Left: Charts Card -->
+                    <div class="card bg-glass">
+                        <h3 class="card-title"><i class="fa-solid fa-chart-column"></i> Target & Category Skewness</h3>
+                        <div class="chart-container">
+                            <canvas id="eda-target-chart"></canvas>
+                        </div>
+                        <div class="chart-container margin-top">
+                            <canvas id="eda-unknowns-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Info Panel & Summaries -->
+                    <div class="card bg-glass scrollable-y">
+                        <h3 class="card-title"><i class="fa-solid fa-circle-info"></i> Key Dataset Profile</h3>
+                        <div class="stat-grid-row">
+                            <div class="stat-box">
+                                <span class="val">41,188</span>
+                                <span class="lbl">Total Records</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="val">11.27%</span>
+                                <span class="lbl">Subscribed (Yes)</span>
+                            </div>
+                            <div class="stat-box">
+                                <span class="val">88.73%</span>
+                                <span class="lbl">Unsubscribed (No)</span>
+                            </div>
+                        </div>
+                        
+                        <div class="eda-details-list">
+                            <div class="details-item">
+                                <h4><i class="fa-solid fa-arrow-trend-up"></i> Age Demographics</h4>
+                                <p>Average age is 40.02 years. The youngest client was 17, and the oldest was 98. Subscriptions show a U-shape curve, higher among students and elderly retirees.</p>
+                            </div>
+                            <div class="details-item">
+                                <h4><i class="fa-solid fa-phone-slash"></i> Contacts Capping Recommendation</h4>
+                                <p>The database shows some clients called up to 56 times. Over 42.8% of clients were contacted only once. Success probabilities decrease significantly after 3 attempts.</p>
+                            </div>
+                            <div class="details-item">
+                                <h4><i class="fa-solid fa-sack-dollar"></i> Loan Feature Non-Significance</h4>
+                                <p>Chi-Square tests show Housing Loan (p=0.058) and Personal Loan (p=0.579) have no statistically significant relationship with subscription. Debt status is not an obstacle to saving.</p>
+                            </div>
+                            <div class="details-item">
+                                <h4><i class="fa-solid fa-euro-sign"></i> Euribor 3M Interest Rates</h4>
+                                <p>Mean rate was 3.62%. Highly bimodal (centered at 1.4% and 4.86%). Subscriptions increase in low Euribor rate conditions (avg 2.12% vs 3.81% for non-subscribers).</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- SECTION 3: MODEL LEADERBOARD -->
+            <section id="section-models" class="content-section" aria-labelledby="models-header">
+                <h2 class="section-title-bar" id="models-header">Pipeline Performance Leaderboard</h2>
+                <div class="grid-2-cols flex-column-tablet">
+                    <!-- Left: Leaderboard Chart -->
+                    <div class="card bg-glass">
+                        <h3 class="card-title"><i class="fa-solid fa-chart-gantt"></i> Model F1-Score & Recall Comparison</h3>
+                        <div class="chart-container-large">
+                            <canvas id="model-comparison-chart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Grid Table -->
+                    <div class="card bg-glass scrollable-y">
+                        <h3 class="card-title"><i class="fa-solid fa-table-list"></i> Detailed Metrics Table</h3>
+                        <div class="table-wrapper">
+                            <table class="leaderboard-table" id="leaderboard-table">
+                                <thead>
+                                    <tr>
+                                        <th>Model / Strategy</th>
+                                        <th>Accuracy</th>
+                                        <th>Precision</th>
+                                        <th>Recall</th>
+                                        <th>F1-Score</th>
+                                        <th>ROC AUC</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leaderboard-tbody">
+                                    <!-- Populated dynamically via app.js -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECTION 4: THRESHOLD TUNING PLAYGROUND -->
+            <section id="section-tuning" class="content-section" aria-labelledby="tuning-header">
+                <h2 class="section-title-bar" id="tuning-header">Model Threshold Tuning Playground</h2>
+                <div class="grid-2-cols">
+                    <!-- Left: Tuning Interactive Slider & Matrix -->
+                    <div class="card bg-glass flex-col-justify-between">
+                        <div>
+                            <h3 class="card-title"><i class="fa-solid fa-sliders"></i> Classification Threshold</h3>
+                            <p class="card-description">Adjust the decision probability threshold on the balanced classifier to see how the confusion matrix and evaluation metrics adapt in real time.</p>
+                            
+                            <div class="slider-widget-box margin-top">
+                                <label for="threshold-slider" class="slider-label">
+                                    <span>Decision Threshold:</span>
+                                    <span class="highlight-val" id="threshold-val-lbl">0.50</span>
+                                </label>
+                                <input type="range" id="threshold-slider" min="0.2" max="0.6" step="0.1" value="0.5" class="custom-slider">
+                                <div class="slider-ticks">
+                                    <span>0.2</span>
+                                    <span>0.3</span>
+                                    <span>0.4</span>
+                                    <span>0.5</span>
+                                    <span>0.6</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Confusion Matrix Visualizer -->
+                        <div class="confusion-matrix-box margin-top">
+                            <h4 class="card-subtitle">Confusion Matrix (Test Partition)</h4>
+                            <div class="matrix-grid">
+                                <div class="matrix-cell label-cell"></div>
+                                <div class="matrix-cell header-cell">Actual NO</div>
+                                <div class="matrix-cell header-cell">Actual YES</div>
+                                
+                                <div class="matrix-cell header-row-cell">Pred NO</div>
+                                <div class="matrix-cell val-cell" id="cell-tn">6279</div>
+                                <div class="matrix-cell val-cell error-cell" id="cell-fn">328</div>
+                                
+                                <div class="matrix-cell header-row-cell">Pred YES</div>
+                                <div class="matrix-cell val-cell error-cell" id="cell-fp">1031</div>
+                                <div class="matrix-cell val-cell success-cell" id="cell-tp">600</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Threshold Curve Chart & Dynamic Stats -->
+                    <div class="card bg-glass">
+                        <h3 class="card-title"><i class="fa-solid fa-chart-line"></i> Precision-Recall-F1 Tradeoff Curve</h3>
+                        <div class="chart-container-tuning">
+                            <canvas id="threshold-curve-chart"></canvas>
+                        </div>
+                        <div class="stat-metrics-row margin-top">
+                            <div class="small-stat-card">
+                                <span class="lbl">F1-Score</span>
+                                <span class="val cyan" id="stat-f1">46.89%</span>
+                            </div>
+                            <div class="small-stat-card">
+                                <span class="lbl">Recall (Capture)</span>
+                                <span class="val green" id="stat-recall">64.66%</span>
+                            </div>
+                            <div class="small-stat-card">
+                                <span class="lbl">Precision (Yield)</span>
+                                <span class="val coral" id="stat-precision">36.79%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- SECTION 5: ROI / VALUE CALCULATOR -->
+            <section id="section-roi" class="content-section" aria-labelledby="roi-header">
+                <h2 class="section-title-bar" id="roi-header">Operational ROI & Business Value Calculator</h2>
+                
+                <div class="grid-layout-calculator">
+                    <!-- Left: Control Sliders Card -->
+                    <div class="card bg-glass flex-col-justify-between">
+                        <h3 class="card-title"><i class="fa-solid fa-gears"></i> Campaign Design Inputs</h3>
+                        <p class="card-description">Set campaign constraints to simulate financial values.</p>
+                        
+                        <div class="calculator-controls margin-top">
+                            <!-- Input 1 -->
+                            <div class="slider-widget-box">
+                                <label for="roi-total-leads" class="slider-label">
+                                    <span>Total Lead List Size:</span>
+                                    <span class="highlight-val" id="lbl-total-leads">10,000</span>
+                                </label>
+                                <input type="range" id="roi-total-leads" min="1000" max="50000" step="1000" value="10000" class="custom-slider">
+                            </div>
+                            
+                            <!-- Input 2 -->
+                            <div class="slider-widget-box margin-top-md">
+                                <label for="roi-call-cost" class="slider-label">
+                                    <span>Cost per Phone Call ($):</span>
+                                    <span class="highlight-val" id="lbl-call-cost">$5.00</span>
+                                </label>
+                                <input type="range" id="roi-call-cost" min="1.00" max="15.00" step="0.50" value="5.00" class="custom-slider">
+                            </div>
+                            
+                            <!-- Input 3 -->
+                            <div class="slider-widget-box margin-top-md">
+                                <label for="roi-value-sub" class="slider-label">
+                                    <span>Value per Successful Subscriber ($):</span>
+                                    <span class="highlight-val" id="lbl-value-sub">$150.00</span>
+                                </label>
+                                <input type="range" id="roi-value-sub" min="50.00" max="500.00" step="10.00" value="150.00" class="custom-slider">
+                            </div>
+                            
+                            <!-- Input 4 -->
+                            <div class="slider-widget-box margin-top-md">
+                                <label for="roi-capacity" class="slider-label">
+                                    <span>Max Call Capacity (If restricted):</span>
+                                    <span class="highlight-val" id="lbl-capacity">2,000 calls</span>
+                                </label>
+                                <input type="range" id="roi-capacity" min="500" max="10000" step="250" value="2000" class="custom-slider">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right: Dynamic Results Grid -->
+                    <div class="card bg-glass flex-col-justify-between">
+                        <h3 class="card-title"><i class="fa-solid fa-chart-line"></i> Campaign Value Strategy Comparisons</h3>
+                        <p class="card-description">Comparative financial metrics assuming limited contact capacity (max calls limit set at left).</p>
+                        
+                        <div class="comparison-cards-grid margin-top">
+                            <!-- Card A: Call Everyone -->
+                            <div class="strategy-card">
+                                <div class="hdr">Strategy A: Random Calling</div>
+                                <div class="body">
+                                    <div class="m-row"><span class="l">Calls Made</span><span class="v" id="strat-a-calls">2,000</span></div>
+                                    <div class="m-row"><span class="l">Campaign Cost</span><span class="v" id="strat-a-cost">$10,000</span></div>
+                                    <div class="m-row"><span class="l">Subscribers</span><span class="v" id="strat-a-subs">225</span></div>
+                                    <div class="m-row"><span class="l">Gross Rev.</span><span class="v" id="strat-a-rev">$33,750</span></div>
+                                    <div class="divider"></div>
+                                    <div class="m-row main-metric"><span class="l">Net Profit</span><span class="v" id="strat-a-profit">$23,750</span></div>
+                                    <div class="m-row"><span class="l">Acquisition Cost (CAC)</span><span class="v" id="strat-a-cac">$44.44</span></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Card B: Machine Learning Targeted -->
+                            <div class="strategy-card recommended">
+                                <div class="hdr"><i class="fa-solid fa-star"></i> Strategy B: ML Targeted</div>
+                                <div class="body">
+                                    <div class="m-row"><span class="l">Calls Made</span><span class="v" id="strat-b-calls">2,000</span></div>
+                                    <div class="m-row"><span class="l">Campaign Cost</span><span class="v" id="strat-b-cost">$10,000</span></div>
+                                    <div class="m-row"><span class="l">Subscribers</span><span class="v highlight" id="strat-b-subs">884</span></div>
+                                    <div class="m-row"><span class="l">Gross Rev.</span><span class="v" id="strat-b-rev">$132,600</span></div>
+                                    <div class="divider"></div>
+                                    <div class="m-row main-metric"><span class="l">Net Profit</span><span class="v highlight" id="strat-b-profit">$122,600</span></div>
+                                    <div class="m-row"><span class="l">Acquisition Cost (CAC)</span><span class="v highlight-green" id="strat-b-cac">$11.31</span></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Value Lift Visual Summary -->
+                        <div class="roi-summary-alert margin-top">
+                            <div class="icon-holder"><i class="fa-solid fa-circle-check"></i></div>
+                            <div class="text-holder">
+                                <strong>ML-Targeting Net Profit Lift:</strong> 
+                                <span class="lift-value" id="roi-profit-lift">+$98,850</span> 
+                                (<span id="roi-pct-lift">416%</span> increase in efficiency. Customer Acquisition Cost slashed by <span id="roi-cac-cut">74%</span>!)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- SECTION 6: WHAT-IF CUSTOMER SIMULATOR -->
+            <section id="section-simulator" class="content-section" aria-labelledby="simulator-header">
+                <h2 class="section-title-bar" id="simulator-header">What-If Customer Profile Simulator</h2>
+                
+                <div class="grid-2-cols">
+                    <!-- Left: Customer Form Inputs -->
+                    <div class="card bg-glass">
+                        <h3 class="card-title"><i class="fa-solid fa-id-card"></i> Prospect Profile Attributes</h3>
+                        <p class="card-description">Configure the demographics, campaign history, and economic context to predict deposit subscription probability.</p>
+                        
+                        <form id="simulator-form" class="sim-grid-form margin-top" onsubmit="event.preventDefault();">
+                            <!-- Col 1 -->
+                            <div class="form-group">
+                                <label for="sim-age">Client Age:</label>
+                                <input type="number" id="sim-age" min="17" max="98" value="38" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-job">Profession:</label>
+                                <select id="sim-job" class="form-input">
+                                    <option value="admin.">Admin / Office</option>
+                                    <option value="blue-collar">Blue-Collar Worker</option>
+                                    <option value="technician">Technician</option>
+                                    <option value="services">Services</option>
+                                    <option value="management">Management</option>
+                                    <option value="retired">Retired</option>
+                                    <option value="student">Student</option>
+                                    <option value="self-employed">Self-Employed</option>
+                                    <option value="unemployed">Unemployed</option>
+                                    <option value="unknown">Unknown</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-marital">Marital Status:</label>
+                                <select id="sim-marital" class="form-input">
+                                    <option value="married">Married</option>
+                                    <option value="single">Single</option>
+                                    <option value="divorced">Divorced</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-education">Education Level:</label>
+                                <select id="sim-education" class="form-input">
+                                    <option value="university.degree">University Degree</option>
+                                    <option value="high.school">High School</option>
+                                    <option value="professional.course">Professional Course</option>
+                                    <option value="basic.9y">Basic 9-Year</option>
+                                    <option value="basic.4y">Basic 4-Year</option>
+                                    <option value="unknown">Unknown</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Col 2 -->
+                            <div class="form-group">
+                                <label for="sim-poutcome">Previous Contact Outcome:</label>
+                                <select id="sim-poutcome" class="form-input">
+                                    <option value="nonexistent">Never Contacted Before</option>
+                                    <option value="success">Success (Subscribed previously)</option>
+                                    <option value="failure">Failure (Declined previously)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-campaign">Campaign Call Count:</label>
+                                <input type="number" id="sim-campaign" min="1" max="10" value="1" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-euribor">Euribor 3-Month Interest Rate (%):</label>
+                                <input type="number" id="sim-euribor" min="0.5" max="5.5" step="0.1" value="3.6" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label for="sim-contact">Contacting Method:</label>
+                                <select id="sim-contact" class="form-input">
+                                    <option value="cellular">Cellular (Mobile Phone)</option>
+                                    <option value="telephone">Telephone (Landline)</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Right: Prediction Output -->
+                    <div class="card bg-glass flex-col-center-all text-center">
+                        <h3 class="card-title w-full text-left"><i class="fa-solid fa-chart-simple"></i> Lead Scoring Prediction</h3>
+                        
+                        <!-- Prediction Gauge Indicator -->
+                        <div class="gauge-container margin-top">
+                            <svg class="radial-gauge" viewBox="0 0 100 100">
+                                <circle class="gauge-bg" cx="50" cy="50" r="40"></circle>
+                                <circle class="gauge-fill" id="sim-gauge-fill" cx="50" cy="50" r="40" stroke-dasharray="251" stroke-dashoffset="251"></circle>
+                            </svg>
+                            <div class="gauge-overlay">
+                                <span class="percentage" id="sim-score-pct">0%</span>
+                                <span class="label">Probability</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Outcome Card -->
+                        <div class="outcome-verdict-box margin-top" id="sim-verdict-box">
+                            <span class="badge" id="sim-badge">EVALUATING</span>
+                            <h4 class="verdict-title" id="sim-verdict-title">Model Output</h4>
+                            <p class="verdict-desc" id="sim-verdict-desc">Configure customer options at the left to get scoring metrics.</p>
+                        </div>
+                        
+                        <!-- Action Guidance -->
+                        <div class="action-recommendation-box margin-top w-full" id="sim-action-box">
+                            <i class="fa-solid fa-lightbulb"></i>
+                            <span id="sim-action-text">Adjust sliders to scoring list parameters.</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

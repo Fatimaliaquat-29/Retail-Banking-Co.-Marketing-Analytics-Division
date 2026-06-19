@@ -1,0 +1,22 @@
+,Unknown Count,Unknown Percentage (%)
+default,8597,20.87258424783918
+education,1731,4.202680392347285
+housing,990,2.40361270272895
+loan,990,2.40361270272895
+job,330,0.8012042342429834
+marital,80,0.1942313295134505
+age,0,0.0
+contact,0,0.0
+month,0,0.0
+day_of_week,0,0.0
+duration,0,0.0
+campaign,0,0.0
+pdays,0,0.0
+previous,0,0.0
+poutcome,0,0.0
+emp.var.rate,0,0.0
+cons.price.idx,0,0.0
+cons.conf.idx,0,0.0
+euribor3m,0,0.0
+nr.employed,0,0.0
+y,0,0.0
